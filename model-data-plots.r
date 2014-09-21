@@ -5,33 +5,37 @@ plot.experiment <- function(exp, combo) {
   runs <- all.runs[index,];
   runs.exp <- runs[runs$experiment==exp,];
   ht <- as.matrix(cbind(runs.exp$data, runs.exp$model));
+  measure <- runs.exp$measure[1]
 
-#  ht.lower <-as.matrix(cbind(runs.exp$data.lower, runs.exp$model.lower));
-#  ht.upper <-as.matrix(cbind(runs.exp$data.upper, runs.exp$model.upper));
+  runs.exp$data.lower <- 0
+  runs.exp$data.upper <- 0
+  ht.lower <-as.matrix(cbind(runs.exp$data.lower, runs.exp$model.lower));
+  ht.upper <-as.matrix(cbind(runs.exp$data.upper, runs.exp$model.upper));
 
   param.names <- colnames(all.runs)[1:num.parameters];
   param.values <- runs[1,1:num.parameters];
   
+  if(measure=="percent error") ylim <- c(0,50) else ylim <- c(0,max(ht)+50)
+
   barplot2(height=ht,
            bty="n",
-#           ci.l = ht.lower,
-#           ci.u = ht.upper,
-#           ci.color="gray40",
-#           plot.ci=TRUE,
-           plot.ci=FALSE,
+          ci.l = ht.lower,
+          ci.u = ht.upper,
+          ci.color="gray40",
+          plot.ci=TRUE,
+           # plot.ci=FALSE,
            col=rev(grey.colors(length(runs.exp$condition))),
            ##  legend.text=runs.exp$condition,
            names=c("Data","Retrieval Interference Model"),
            beside=TRUE,
            space = c(0.1, 1),
-           ylim = c(0,50),
+           ylim = ylim,
            axes=TRUE,
-           
            xlab="", ylab=as.character(runs.exp$measure[1]),
            cex.lab=1.0,
            main=get.description(exp),
-           sub=sprintf("noise=%f, mas=%f, mp=%f, d=%f", param.values$ans,param.values$mas,
-             param.values$match.penalty,param.values$d)
+           sub=sprintf("lf=%3.2f, noise=%3.2f, mas=%3.2f, mp=%3.2f, d=%3.2f, w=%3.2f", param.values$F, param.values$ans,param.values$mas,
+             param.values$match.penalty,param.values$d, param.values$G)
            );
   
   axis(1,labels=FALSE,tcl=0);  ## zero tick length
@@ -178,7 +182,7 @@ plot.individual.no.decay.no.mp <- function() {
 
 
 
-
+## Plots best fit across all experiments
 plot.best.overall.decay <- function() {
   subs <- combo.summary[combo.summary$d==0.5,];
   c <- subs$combo[which.min(subs$mse)];
@@ -241,7 +245,7 @@ plot.best.overall.decay.no.mp <- function() {
 
 
 
-  
+## Plots best fit for each experiment
 plot.individual.decay <- function() {
   pdf(file="best-individual-decay.pdf",height=11,width=8.5);
 #  par(mfrow=c(3,2));
