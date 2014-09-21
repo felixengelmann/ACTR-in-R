@@ -33,8 +33,10 @@ obj.subj.rc.embV <- list(name = "ORC vs. SRC - embedded verb",
                        num.experimental.items = 10,
                        retrievals = "retrievals-subj-rel.txt",
                        items = "items-subj-rel.txt",
-                       data = 4,
-                       measure="percent error",
+                       data = 353,
+                       # measure="percent error",
+                       measure="latency",
+                       procedural.duration = 100,
                        correct.item = 2,
                        distractor.item = 1,
                        critical.retrieval = 2),
@@ -45,11 +47,13 @@ obj.subj.rc.embV <- list(name = "ORC vs. SRC - embedded verb",
                        num.experimental.items = 10,                                              
                        retrievals = "retrievals-obj-rel.txt",
                        items = "items-obj-rel.txt",
-                       data = 10,
-                       measure="percent error",
+                       data = 420,
+                       # measure="percent error",
+                       measure="latency",
+                       procedural.duration = 150,
                        correct.item = 2,
                        distractor.item = 1, 
-                       critical.retrieval = 3)
+                       critical.retrieval = 2:3)
                   ));
 
 obj.subj.rc.mainV <- list(name = "ORC vs. SRC - main verb",
@@ -62,8 +66,10 @@ obj.subj.rc.mainV <- list(name = "ORC vs. SRC - main verb",
                        num.experimental.items = 10,
                        retrievals = "retrievals-subj-rel.txt",
                        items = "items-subj-rel.txt",
-                       data = 4,
-                       measure="percent error",
+                       data = 400,
+                       # measure="percent error",
+                       measure="latency",
+                       procedural.duration = 100,
                        correct.item = 1,
                        distractor.item = 4,
                        critical.retrieval = 3),
@@ -74,8 +80,10 @@ obj.subj.rc.mainV <- list(name = "ORC vs. SRC - main verb",
                        num.experimental.items = 10,                                              
                        retrievals = "retrievals-obj-rel.txt",
                        items = "items-obj-rel.txt",
-                       data = 4,
-                       measure="percent error",
+                       data = 404,
+                       # measure="percent error",
+                       measure="latency",
+                       procedural.duration = 100,
                        correct.item = 1,
                        distractor.item = 3, 
                        critical.retrieval = 4)
@@ -187,6 +195,8 @@ for (e in 1:num.experiments) {
   exp.name <- experiments[[e]]$name;
   for (c in 1:length(experiments[[e]]$conditions)) {
     cond <- experiments[[e]]$conditions[[c]];
+
+    if(is.null(cond$procedural.duration)) cond$procedural.duration <- 0
     
     model.runs <- rbind(model.runs,
                         data.frame(experiment = rep(exp.name,num.combinations),
@@ -196,7 +206,8 @@ for (e in 1:num.experiments) {
                                    num.experimental.items = rep(cond$num.experimental.items, num.combinations),
                                    num.experimental.subjects = rep(cond$num.experimental.subjects, num.combinations),
                                    measure = rep(cond$measure, num.combinations),
-                                   critical.retrieval = rep(cond$critical.retrieval, num.combinations),
+                                   procedural.duration = rep(cond$procedural.duration, num.combinations),
+                                   critical.retrieval = rep(toString(cond$critical.retrieval), num.combinations),
                                    correct.item = rep(cond$correct.item, num.combinations),
                                    distractor.item = rep(cond$distractor.item, num.combinations),
                                    data = rep(cond$data, num.combinations),
@@ -224,10 +235,11 @@ colnames(full.parameter.matrix) <- c("cat.penalty", "F", "G", "ans", "mas", "d",
 
 ## Finally, form the complete model run matrix.
 all.runs <- as.data.frame(cbind(full.parameter.matrix, model.runs));
-
 pdf(file="activation-plots.pdf",width=11,height=5);
 
+
 ## Loop over all runs and run the models
+# r <- 1
 for (r in 1:total.runs) {
   
   output.file <- "output.html";
@@ -246,7 +258,7 @@ for (r in 1:total.runs) {
   num.experimental.items <- this.run$num.experimental.items;
   num.experimental.subjects <- this.run$num.experimental.subjects;
 
-#  results <- run.model.quietly();
+ # results <- run.model.quietly();
   results <- run.model(quiet=FALSE);
 
   ## plot the activation profiles for the critical and distractor items
@@ -261,10 +273,27 @@ for (r in 1:total.runs) {
   ## now extract the relevant measure
 
   if (this.run$measure=="percent error") {
-    crit.ret <- results[[this.run$critical.retrieval]];
+    ## TODO: extend percent error to several retrievals
+    crit.ret <- results[[as.numeric(unlist(strsplit(toString(this.run$critical.retrieval),",")))]];
     model.result <- crit.ret$retrieval.prob[this.run$distractor.item] * 100;
     model.result.lower <- crit.ret$retrieval.prob.lower[this.run$distractor.item] * 100;
     model.result.upper <- crit.ret$retrieval.prob.upper[this.run$distractor.item] * 100;        
+  } 
+  else if (this.run$measure=="latency") {
+    crit.ret.list <- as.numeric(unlist(strsplit(toString(this.run$critical.retrieval),",")));
+    # crit.ret.list <- c(3,4)
+    model.result <- this.run$procedural.duration;
+    model.result.sd <- 0;
+    model.result.lower <- 0;
+    model.result.upper <- 0;
+    for(retr in crit.ret.list){
+      crit.ret <- results[[retr]];
+      winner <- length(crit.ret$latency.mean)
+      model.result <- model.result + crit.ret$latency.mean[winner];
+      model.result.sd <- model.result.sd + crit.ret$latency.sd[winner]^2;
+    }
+    model.result.lower <- model.result - sqrt(model.result.sd);
+    model.result.upper <- model.result + sqrt(model.result.sd);
   }
   else {
     model.result <- NA;
@@ -280,6 +309,11 @@ for (r in 1:total.runs) {
 }
 
 dev.off();
+
+
+
+
+
 
 
 ## Compute MSE and R^2 for each unique combination of parameter settings
