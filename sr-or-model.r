@@ -8,7 +8,7 @@
 ###  Version 3.0
 ###  2 Feb 2007
 ###
-###  Edited by Felix Engelmann:
+###  Edited by Felix Engelmann (felix.engelmann@uni-potsdam.de):
 ###    + Implemented measure "latency"
 ###    + Added possibility to specify multiple retrievals for critical.retrieval with measure "latency"
 ###      (result will be sum of latencies)
