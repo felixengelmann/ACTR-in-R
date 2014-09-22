@@ -184,16 +184,17 @@ for (e in 1:num.experiments) {
                                    num.experimental.items = rep(cond$num.experimental.items, num.combinations),
                                    num.experimental.subjects = rep(cond$num.experimental.subjects, num.combinations),
                                    measure = rep(cond$measure, num.combinations),
-                                   procedural.duration = rep(cond$procedural.duration, num.combinations),
                                    critical.retrieval = rep(toString(cond$critical.retrieval), num.combinations),
                                    correct.item = rep(cond$correct.item, num.combinations),
                                    distractor.item = rep(cond$distractor.item, num.combinations),
+                                   procedural.duration = rep(cond$procedural.duration, num.combinations),
                                    data = rep(cond$data, num.combinations),
 #                                   data.lower = rep(cond$data - cond$data.se, num.combinations),
 #                                   data.upper = rep(cond$data + cond$data.se, num.combinations),
                                    model = rep(NA, num.combinations),
                                    model.lower = rep(NA, num.combinations),
-                                   model.upper = rep(NA, num.combinations)
+                                   model.upper = rep(NA, num.combinations),
+                                   all.crit.latencies = rep(NA, num.combinations)
                                      ));     # placeholder for
                                         # model result
   }
@@ -250,6 +251,7 @@ for (r in 1:total.runs) {
 
   ## now extract the relevant measure
 
+  all.crit.latencies <- NULL;
   if (this.run$measure=="percent error") {
     ## TODO: extend percent error to several retrievals
     crit.ret <- results[[as.numeric(unlist(strsplit(toString(this.run$critical.retrieval),",")))]];
@@ -269,6 +271,7 @@ for (r in 1:total.runs) {
       winner <- length(crit.ret$latency.mean)
       model.result <- model.result + crit.ret$latency.mean[winner];
       model.result.sd <- model.result.sd + crit.ret$latency.sd[winner]^2;
+      all.crit.latencies <- c(all.crit.latencies, crit.ret$latency.mean[winner]);
     }
     model.result.lower <- model.result - sqrt(model.result.sd);
     model.result.upper <- model.result + sqrt(model.result.sd);
@@ -282,6 +285,7 @@ for (r in 1:total.runs) {
   all.runs[r,]$model <- model.result;
   all.runs[r,]$model.lower <- model.result.lower;
   all.runs[r,]$model.upper <- model.result.upper;
+  all.runs[r,]$all.crit.latencies <- toString(all.crit.latencies);
 
   
 }
