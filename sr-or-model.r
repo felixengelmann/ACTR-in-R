@@ -107,9 +107,9 @@ simulated.experiments <- 50;
 ## of possible values rather than a single value.  
 
 ## Latency factor
-# F <- c(0.14)
+F <- c(0.14)
 # F <- c(0.5, 0.6);
-F <- c(0.14, 0.2, 0.3);
+# F <- c(0.14, 0.4, 0.5, 0.6);
 
 ## Extra category penalty
 cat.penalty <- c(-999);
@@ -120,24 +120,24 @@ cat.penalty <- c(-999);
 G <- c(1.0);
 
 ## Activation noise parameter for logistic distribution
-# ans  <- c(0.15)
-ans  <- c(0.15, 0.2)
+ans  <- c(0.15)
+# ans  <- c(0.15, 0.2)
 
 ## Fan parameter
-# mas <- c(1.5)
-mas <- c(1.5, 2.0)
+mas <- c(1.5)
+# mas <- c(1.5, 2.0)
 # mas <- c(1.5, 2.0, 2.5, 3.0)
 
 
 ## Base level decay parameter
-# d <- c(0.5);
-d <- c(0.001, 0.5);
+d <- c(0.5);
+# d <- c(0.001, 0.5);
 
 
 ## Match penalty
 # match.penalty <- c(0)
-# match.penalty <- c(-1.5)
-match.penalty <- c(0, -1.5, -2)
+match.penalty <- c(-1.5)
+# match.penalty <- c(0, -1.5, -2)
 
 
 ## VAR mismatch penalty
@@ -160,6 +160,23 @@ source("run-experiments.r")
 
 
 
+### Now plot various subsets of the parameter settings
+
+# plot.best.overall.no.decay();
+# plot.individual.no.decay();
+# plot.best.overall.no.decay.no.mp();
+# plot.individual.no.decay.no.mp();
+# plot.best.overall.decay.no.mp();
+# plot.individual.decay.no.mp();
+
+plot.best.overall.decay();
+plot.individual.decay();
+
+# plot.full.range.no.decay();
+plot.full.range.decay();
+
+
+
 ### Results
 results
 all.runs
@@ -167,20 +184,7 @@ param.results
 combo.summary
 
 
-
-
-### Now plot various subsets of the parameter settings
-
-plot.best.overall.no.decay();
-plot.individual.no.decay();
-plot.best.overall.no.decay.no.mp();
-plot.individual.no.decay.no.mp();
-plot.best.overall.decay.no.mp();
-plot.individual.decay.no.mp();
-
-plot.best.overall.decay();
-plot.individual.decay();
-
-plot.full.range.no.decay();
-plot.full.range.decay();
+predictions <- all.runs[,c(13,23:27)]
+all.latencies <- lapply(predictions$all.crit.latencies, function(x) as.numeric(unlist(strsplit(toString(x),","))))
+write.table(predictions, "predictions.txt")
 
