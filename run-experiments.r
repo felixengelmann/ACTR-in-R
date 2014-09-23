@@ -214,7 +214,8 @@ colnames(full.parameter.matrix) <- c("cat.penalty", "F", "G", "ans", "mas", "d",
 
 ## Finally, form the complete model run matrix.
 all.runs <- as.data.frame(cbind(full.parameter.matrix, model.runs));
-pdf(file="activation-plots.pdf",width=11,height=5);
+
+if(silent.mode==FALSE) pdf(file="activation-plots.pdf",width=11,height=5);
 
 
 ## Loop over all runs and run the models
@@ -237,16 +238,17 @@ for (r in 1:total.runs) {
   num.experimental.items <- this.run$num.experimental.items;
   num.experimental.subjects <- this.run$num.experimental.subjects;
 
- # results <- run.model.quietly();
-  results <- run.model(quiet=FALSE);
+  if(silent.mode==FALSE) results <- run.model(quiet=FALSE) else results <- run.model.quietly();
 
   ## plot the activation profiles for the critical and distractor items
 
     clrs <- c("black", "green","blue","orange", "brown");
 
+    if(silent.mode==FALSE) {
       plot.activation(moments, history, this.run$correct.item,
                        this.run$distractor.item,
                        this.run$experiment, this.run$condition);
+    }
   
 
   ## now extract the relevant measure
@@ -290,7 +292,7 @@ for (r in 1:total.runs) {
   
 }
 
-dev.off();
+if(silent.mode==FALSE) dev.off();
 
 
 
