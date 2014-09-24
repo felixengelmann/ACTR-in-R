@@ -324,7 +324,7 @@ plot.experiment.all.combos <- function(exp,decay=TRUE) {
        xlab="",
        ylab="",
        main = get.description(exp),
-       ylim=c(0,40),
+       # ylim=c(0,40),
        xaxt="n"
        );
 
@@ -373,4 +373,41 @@ plot.full.range.no.decay <- function() {
   }
   dev.off();
 }
+
+
+
+
+
+
+##
+plot.all <- function(combos=1:num.combinations, expnum=1:num.experiments, prefix="") {
+  for(m in combos){
+    pdf(file=paste(prefix,"combo-",m,".pdf",sep=""),height=11,width=8.5);
+  #  par(mfrow=c(3,2));
+    par(pin=c(6.5,3.5));   # this is a hack to make the Slovak graph wider
+    model.points <- c();
+    data.points <- c();
+
+    for (e in expnum) {
+      exp <- experiments[[e]]$name;
+      this.exp <- param.results[(param.results$experiment==exp),];
+      # m <- which.min(this.exp$mse);
+      c <- this.exp$combo[m];
+      plotted.points <- plot.experiment(exp, c);
+      data.points <- c(data.points, plotted.points[,1]);
+      model.points <- c(model.points, plotted.points[,2]);
+      # par(pin=c(3.5,3.5));        
+    }
+
+    pmin <- min(c(model.points,data.points))
+    pmax <- max(c(model.points,data.points))
+    plot(model.points ~ data.points,
+       xlim=c(0,max(data.points)),ylim=c(0,max(model.points)),
+     main="Model vs. Data Across Conditions",
+     xlab ="Data", ylab="Model");
+    lines(x=c(0,max(data.points)), y=c(0,max(data.points)),lty=3);
+    dev.off();
+  }
+}
+
 

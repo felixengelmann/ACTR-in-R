@@ -157,7 +157,7 @@ distinctiveness <- c(0);
 
 
 source("run-experiments.r")
-
+save(results, all.runs, param.results, combo.summary, num.parameters, num.combinations, total.conditions, total.runs, file="simulation-results.RData")
 
 
 ### Now plot various subsets of the parameter settings
@@ -176,7 +176,6 @@ plot.individual.decay();
 plot.full.range.decay();
 
 
-
 ### Results
 results
 all.runs
@@ -184,7 +183,24 @@ param.results
 combo.summary
 
 
+## Plot all combos:
+plot.all(prefix="plots/")
+
+## Plot combos with G==1:
+p <- combo.summary$combo[combo.summary$G==1]
+plot.all(combos=p, expnum=2, prefix="plots/")
+
+## Export data:
 predictions <- all.runs[,c(13,23:27)]
 all.latencies <- lapply(predictions$all.crit.latencies, function(x) as.numeric(unlist(strsplit(toString(x),","))))
 write.table(predictions, "predictions.txt")
+
+## Export combo 10:
+head(all.runs)
+exp <- experiments[[1]]$name
+combo <- 10
+index <- seq(from=combo, to=total.runs, by=num.combinations);
+predictions <- all.runs[index,c(13,23:26)]
+
+
 
