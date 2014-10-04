@@ -169,7 +169,9 @@ for (r in 1:total.runs) {
       crit.ret <- results[[retr]];
       winner <- length(crit.ret$latency.mean)
       model.result <- model.result + crit.ret$latency.mean[winner];
-      model.result.sd <- model.result.sd + crit.ret$latency.sd[winner]^2;
+      if(use.standard.error){
+        model.result.sd <- model.result.sd + crit.ret$latency.se[winner]^2;} else {
+          model.result.sd <- model.result.sd + crit.ret$latency.sd[winner]^2;}
       all.crit.latencies <- c(all.crit.latencies, crit.ret$latency.mean[winner]);
     }
     model.result.lower <- model.result - sqrt(model.result.sd);
