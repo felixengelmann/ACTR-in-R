@@ -1,5 +1,12 @@
 ## Note: this file modifies ACT-R to respect category as hard constraint
 
+## Standard error:
+se <- function(x, na.rm = TRUE){
+  if(na.rm) y <- x[!is.na(x)] # remove the missing values, if any
+  sqrt(var(as.vector(y))/length(y))
+}
+
+
 ## The act-r random logistic function. Note that this 
 
 actr.logis <- function(trials,alpha,beta) {
@@ -133,7 +140,9 @@ retrieve <- function(cue.names, retrieval.cues, retrieval.moment) {
     final.activation  <- noisy.activation*exists + -999*!exists +
                cat.penalty*!matches.category;
     activation.mean <- rowMeans(final.activation);
-    activation.sd <- apply(final.activation, 1, sd, na.rm=TRUE);
+    if(use.standard.error) {
+      activation.sd <- apply(final.activation, 1, se, na.rm=TRUE);} else {
+        activation.sd <- apply(final.activation, 1, sd, na.rm=TRUE);}
 
 
     ## compute latency given the noisy activation, and mean and sd over all the
@@ -142,7 +151,9 @@ retrieve <- function(cue.names, retrieval.cues, retrieval.moment) {
     final.latency  <- retrieval.latency*exists + doesnt.exist.penalty + doesnt.match.cat.penalty;
 
     latency.mean <- rowMeans(final.latency);
-    latency.sd <- apply(final.latency, 1, sd, na.rm=TRUE);
+    if(use.standard.error){
+      latency.sd <- apply(final.latency, 1, se, na.rm=TRUE);} else {
+        latency.sd <- apply(final.latency, 1, sd, na.rm=TRUE);}
 
     ## find winning item for each trial, and count # of times each item won
     winner <- apply(final.latency, 2, which.min);
@@ -185,7 +196,9 @@ retrieve <- function(cue.names, retrieval.cues, retrieval.moment) {
     ## probability of retrieval
     retrieval.prob <- counts / trials;
     winner.latency.mean <- mean(winner.latency);
-    winner.latency.sd <- sd(winner.latency);
+    if(use.standard.error){
+      winner.latency.sd <- se(winner.latency);} else {
+        winner.latency.sd <- sd(winner.latency);}
 
     summary <-  data.frame(item=c(item.name, "WINNER"),
                            retrieval.prob=c(retrieval.prob,1.0),
@@ -195,6 +208,8 @@ retrieve <- function(cue.names, retrieval.cues, retrieval.moment) {
                            latency.sd=c(latency.sd,winner.latency.sd),
                            activation.mean=c(activation.mean,NA),
                            activation.sd=c(activation.sd,NA));
+    
+    if(use.standard.error) colnames(summary)[c(6,8)] <- c("latency.se", "activation.se")
 
     return(list(summary=summary, winner=winner,latency.mean=latency.mean,final.latency=final.latency));    
 }
