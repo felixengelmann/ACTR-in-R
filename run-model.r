@@ -8,6 +8,15 @@
 ###  Version 3.0
 ###  7 Feb 2007
 ###
+###  Edited by Felix Engelmann (felix.engelmann@uni-potsdam.de):
+###  21 Sep 2014
+###    + Implemented measure "latency"
+###    + Added possibility to specify multiple retrievals for critical.retrieval with measure "latency"
+###      (result will be sum of latencies)
+###    + Added possibility to specify procedural.duration with measure "latency"
+###      (result will be sum of latency and proc. duration)
+###  4. Oct. 2014
+###    + Implemented output of standard error
 ###
 #########################################################################################################
 
