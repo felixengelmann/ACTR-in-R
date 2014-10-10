@@ -8,6 +8,7 @@ Extended by Felix Engelmann (felix.engelmann@uni-potsdam.de):
 * Implemented measure "latency"
 * Added possibility to specify multiple retrievals for critical.retrieval with measure "latency" (result will be sum of latencies)
 * Added possibility to specify procedural.duration with measure "latency" (result will be sum of latency and proc. duration)
+* Implemented output of standard error
 
 ### New possibilities in experiment definition: ###
 
@@ -17,4 +18,12 @@ Extended by Felix Engelmann (felix.engelmann@uni-potsdam.de):
 measure = "latency",
 procedural.duration = 100,
 critical.retrieval = c(2, 3)
+```
+
+### New global variable: ###
+
+```
+#!r
+
+use.standard.error <<- TRUE
 ```
