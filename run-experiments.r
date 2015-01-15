@@ -262,21 +262,3 @@ combo.summary <- as.data.frame(combo.summary);
 
 combo.summary$combo <- seq(1:length(combo.summary[,1]));
 
-
-
-
-
-### Now plot various subsets of the parameter settings
-
-# plot.best.overall.no.decay();
-# plot.individual.no.decay();
-# plot.best.overall.no.decay.no.mp();
-# plot.individual.no.decay.no.mp();
-
-# plot.best.overall.decay();
-# plot.individual.decay();
-# plot.best.overall.decay.no.mp();
-# plot.individual.decay.no.mp();
-
-# plot.full.range.no.decay();
-# plot.full.range.decay();
