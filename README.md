@@ -12,9 +12,7 @@ Extended by Felix Engelmann (felix.engelmann@uni-potsdam.de):
 
 ### New possibilities in experiment definition: ###
 
-```
-#!r
-
+```r
 measure = "latency",
 procedural.duration = 100,
 critical.retrieval = c(2, 3)
@@ -22,8 +20,6 @@ critical.retrieval = c(2, 3)
 
 ### New global variable: ###
 
-```
-#!r
-
+```r
 use.standard.error <<- TRUE
 ```
