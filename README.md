@@ -1,7 +1,6 @@
 # README #
 
-Simple Memory Retrieval Model based on ACT-R theory originally developed by Rick Lewis & William Badecker (rickl@umich.edu).
-With HTML trace output and PDF activation plots.
+Simple Memory Retrieval Model based on ACT-R theory, specifically for interference and distance phenomena in sentence processing. Originally developed by Rick Lewis & William Badecker (rickl@umich.edu).
 
 Extended by Felix Engelmann (felix.engelmann@uni-potsdam.de):
 
